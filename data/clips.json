@@ -1,0 +1,101 @@
+{
+  "topic": "AI Policy & Regulation",
+  "generated": "2026-06-04T09:00:00-04:00",
+  "synthesis": "The governance debate has moved past \"whether to regulate\" and into a contested fight over which institution holds the pen. Responsible-AI advocates are front-loading NDAA pressure ahead of the June 8 SASC markup; OpenAI is explicitly contesting NSA oversight in favor of civilian scientific authority; and CDT is handing state legislators the chatbot-harm taxonomy that 78 live bills have been drafting without. The institutional architecture of U.S. frontier AI governance may be decided in the next 30 days.",
+  "sections": [
+    {
+      "name": "Policy & Advocacy",
+      "icon": "🏛️",
+      "items": [
+        {
+          "outlet": "The Hill",
+          "org": "ARI / Alliance for Secure AI / AI Policy Network",
+          "headline": "Three responsible-AI advocacy groups deliver joint letter to Armed Services Committees on NDAA guardrails",
+          "url": "https://thehill.com/policy/technology/5908512-congress-add-ai-guardrails-ndaa/",
+          "date": "2026-06-04",
+          "takeaway": "With SASC markup four days out, the coalition is converting VP Vance's \"life-and-death decisions in human hands\" rhetoric into floor pressure — potentially giving the AI Guardrails Act unexpected bipartisan cover before positions harden.",
+          "tier": "political",
+          "type": "news"
+        },
+        {
+          "outlet": "CDT",
+          "org": "Center for Democracy & Technology",
+          "headline": "\"Dark Patterns in AI Chatbots\" catalogs 37 deceptive design patterns across major chatbots",
+          "url": "https://cdt.org/insights/dark-patterns-in-ai-chatbots-a-taxonomy-to-inform-better-design/",
+          "date": "2026-06-03",
+          "takeaway": "Seventy-eight chatbot bills are alive in 27 states; CDT's taxonomy hands the state legislative surge the structured harm framework it has been missing.",
+          "tier": "thinktank",
+          "type": "report"
+        }
+      ]
+    },
+    {
+      "name": "Frontier Lab Research & Policy",
+      "icon": "🤖",
+      "items": [
+        {
+          "outlet": "OpenAI",
+          "org": "OpenAI",
+          "headline": "\"Democratic Governance of Frontier AI\" blueprint rejects NSA-led oversight in favor of CAISI civilian evaluations",
+          "url": "https://openai.com/index/frontier-safety-blueprint/",
+          "date": "2026-06-03",
+          "takeaway": "The most visible institutional fault line between a frontier lab and the executive branch in 2026 — whether civilian scientific authority or national-security bodies hold the evaluation keys will define the legitimacy of any federal framework.",
+          "tier": "trade",
+          "type": "report"
+        }
+      ]
+    },
+    {
+      "name": "Safety, Harms & Critical Takes",
+      "icon": "⚠️",
+      "items": [
+        {
+          "outlet": "TechCrunch",
+          "org": "Anthropic",
+          "headline": "Project Glasswing expands to 150 critical-infrastructure orgs in 15+ countries; 10,000+ high-severity vulnerabilities found",
+          "url": "https://techcrunch.com/2026/06/02/anthropic-scales-claude-mythos-to-critical-infrastructure-in-15-countries/",
+          "date": "2026-06-02",
+          "takeaway": "The stated 6–12 month window before rival labs ship Mythos-class models without equivalent safeguards is the operational clock driving this expansion.",
+          "tier": "trade",
+          "type": "news"
+        },
+        {
+          "outlet": "The Information",
+          "org": "",
+          "headline": "\"Cybersecurity's AI Paradox\" — criminal AI tools now enabling bank-account draining at industrial scale",
+          "url": "https://www.theinformation.com",
+          "date": "2026-06-03",
+          "takeaway": "AI is simultaneously the most scalable defense and the most accessible offense — and the offense is deployed ahead of any regulatory framework governing it.",
+          "tier": "trade",
+          "type": "news"
+        }
+      ]
+    },
+    {
+      "name": "Labor & Society",
+      "icon": "👷",
+      "items": [
+        {
+          "outlet": "Bloomberg Opinion",
+          "org": "",
+          "headline": "\"What If AI Retraining Is Just a Comforting Lie?\"",
+          "url": "https://www.bloomberg.com/opinion/articles/2026-06-03/what-if-ai-retraining-is-just-a-comforting-lie",
+          "date": "2026-06-03",
+          "takeaway": "ADP May's 9,000 losses concentrated in AI-exposed information sectors is the empirical backdrop — if the policy response is the manufacturing playbook, midterm-year fallout arrives faster than any program can execute.",
+          "tier": "tier1",
+          "type": "opinion"
+        },
+        {
+          "outlet": "East Asia Forum",
+          "org": "",
+          "headline": "Japan's AI transition faces structural stumbling blocks despite productivity promise",
+          "url": "https://eastasiaforum.org/2026/06/03/japans-ai-transition-faces-stumbling-blocks/",
+          "date": "2026-06-03",
+          "takeaway": "Tokyo is simultaneously buying into the allied AI race and unable to force the domestic industrial restructuring that would let it benefit.",
+          "tier": "thinktank",
+          "type": "opinion"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Policy Clips — Evergreen Strategy Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1419;
+    --surface: #1a2129;
+    --surface-2: #222b35;
+    --border: #2e3a46;
+    --text: #e8edf2;
+    --text-dim: #9aa8b5;
+    --accent: #4ade80;
+    --accent-dim: #166534;
+    --tier1: #f59e0b;
+    --political: #60a5fa;
+    --trade: #a78bfa;
+    --thinktank: #34d399;
+    --opinion: #f87171;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+
+  header {
+    padding: 36px 0 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .brand { font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  h1 { font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; font-weight: 700; margin-top: 6px; }
+  .updated { font-size: 13px; color: var(--text-dim); }
+
+  .synthesis {
+    margin: 28px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+  .synthesis .label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+  .synthesis p { font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; color: var(--text); }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0 8px; }
+  .chip {
+    font-size: 12.5px; font-weight: 500;
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim);
+    cursor: pointer; transition: all .15s;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--text); }
+  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: #fff; }
+  .search {
+    width: 100%; margin-top: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 16px;
+    color: var(--text); font-size: 14px; font-family: inherit;
+  }
+  .search:focus { outline: none; border-color: var(--accent); }
+
+  .section { margin-top: 36px; }
+  .section h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 21px; font-weight: 600;
+    padding-bottom: 10px; margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section h2 .count { font-size: 13px; color: var(--text-dim); font-family: 'Inter'; font-weight: 500; }
+
+  .clip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 12px;
+    transition: border-color .15s;
+  }
+  .clip:hover { border-color: #46586c; }
+  .clip .meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .clip .outlet { font-size: 13px; font-weight: 600; color: var(--text); }
+  .clip .org { font-size: 13px; color: var(--text-dim); }
+  .clip .date { font-size: 12.5px; color: var(--text-dim); margin-left: auto; }
+  .badge {
+    font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 9px; border-radius: 4px;
+  }
+  .badge.tier1 { background: rgba(245,158,11,.13); color: var(--tier1); }
+  .badge.political { background: rgba(96,165,250,.13); color: var(--political); }
+  .badge.trade { background: rgba(167,139,250,.13); color: var(--trade); }
+  .badge.thinktank { background: rgba(52,211,153,.13); color: var(--thinktank); }
+  .badge.opinion { background: rgba(248,113,113,.13); color: var(--opinion); }
+  .clip a.headline {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17.5px; font-weight: 600; color: var(--text);
+    text-decoration: none; display: block; margin-bottom: 10px;
+  }
+  .clip a.headline:hover { color: var(--accent); }
+  .takeaway {
+    font-size: 14px; color: var(--text-dim);
+    border-left: 2px solid var(--border);
+    padding-left: 14px;
+  }
+  .takeaway::before { content: "↳ "; color: var(--accent); }
+
+  .placeholder-note {
+    margin-top: 48px; text-align: center;
+    font-size: 13px; color: var(--text-dim);
+    border: 1px dashed var(--border); border-radius: 8px; padding: 14px;
+  }
+  .hidden { display: none !important; }
+  footer { margin-top: 56px; font-size: 12.5px; color: var(--text-dim); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Evergreen Strategy Group · Clips</div>
+      <h1 id="topic">AI Policy &amp; Regulation</h1>
+    </div>
+    <div class="updated" id="updated"></div>
+  </header>
+
+  <div class="synthesis" id="synthesis">
+    <div class="label">📡 Reading the room</div>
+    <p id="synthesis-text"></p>
+  </div>
+
+  <div class="filters" id="tier-filters">
+    <button class="chip active" data-tier="all">All sources</button>
+    <button class="chip" data-tier="tier1">Tier 1</button>
+    <button class="chip" data-tier="political">Political</button>
+    <button class="chip" data-tier="trade">Trade / Tech</button>
+    <button class="chip" data-tier="thinktank">Think Tank / Research</button>
+    <button class="chip" data-tier="opinion-only">Opinion only</button>
+  </div>
+  <input class="search" id="search" type="search" placeholder="Search clips…">
+
+  <main id="sections"></main>
+
+  <div class="placeholder-note">
+    ⚙️ Placeholder data shown — live hourly feed coming soon.
+  </div>
+
+  <footer>Built by Evergreen Strategy Group · Updates hourly once live</footer>
+</div>
+
+<script>
+let DATA = null;
+
+function fmtDate(d) {
+  return new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+// Live API returns a flat article list; placeholder JSON has pre-built sections.
+// Normalize both into { topic, generated, synthesis?, sections: [{name, icon, items}] }.
+function normalize(d) {
+  if (d.sections) return d;
+  const bySection = {};
+  (d.articles || []).forEach(a => {
+    const key = a.section || "Other Coverage";
+    if (!bySection[key]) bySection[key] = { name: key, icon: a.sectionIcon || "📰", items: [] };
+    bySection[key].items.push({
+      outlet: a.outlet, org: "", headline: a.headline, url: a.url,
+      date: a.date, takeaway: a.description || "", tier: a.tier, type: a.type
+    });
+  });
+  const order = d.sectionOrder || Object.keys(bySection);
+  return {
+    topic: d.topic, generated: d.generated, synthesis: d.synthesis || null,
+    live: true,
+    sections: order.filter(n => bySection[n]).map(n => bySection[n])
+  };
+}
+
+function render() {
+  const tierSel = document.querySelector(".chip.active").dataset.tier;
+  const q = document.getElementById("search").value.toLowerCase();
+  const main = document.getElementById("sections");
+  main.innerHTML = "";
+
+  DATA.sections.forEach(sec => {
+    const items = sec.items.filter(it => {
+      const tierOk = tierSel === "all" ? true
+        : tierSel === "opinion-only" ? it.type === "opinion"
+        : it.tier === tierSel;
+      const qOk = !q || (it.headline + " " + it.outlet + " " + it.org + " " + it.takeaway).toLowerCase().includes(q);
+      return tierOk && qOk;
+    });
+    if (!items.length) return;
+
+    const el = document.createElement("div");
+    el.className = "section";
+    el.innerHTML = `<h2>${sec.icon} ${sec.name} <span class="count">${items.length}</span></h2>`;
+    items.forEach(it => {
+      const clip = document.createElement("div");
+      clip.className = "clip";
+      clip.innerHTML = `
+        <div class="meta">
+          <span class="outlet">${it.outlet}</span>
+          ${it.org && it.org !== it.outlet ? `<span class="org">· ${it.org}</span>` : ""}
+          <span class="badge ${it.tier}">${{tier1:"Tier 1",political:"Political",trade:"Trade/Tech",thinktank:"Think Tank"}[it.tier] || it.tier}</span>
+          ${it.type === "opinion" ? `<span class="badge opinion">Opinion</span>` : ""}
+          <span class="date">${fmtDate(it.date)}</span>
+        </div>
+        <a class="headline" href="${it.url}" target="_blank" rel="noopener">${it.headline}</a>
+        <div class="takeaway">${it.takeaway}</div>`;
+      el.appendChild(clip);
+    });
+    main.appendChild(el);
+  });
+}
+
+function boot(d) {
+  DATA = normalize(d);
+  document.getElementById("topic").innerHTML = DATA.topic;
+  if (DATA.synthesis) {
+    document.getElementById("synthesis-text").textContent = DATA.synthesis;
+  } else {
+    document.getElementById("synthesis").classList.add("hidden");
+  }
+  if (DATA.live) {
+    const note = document.querySelector(".placeholder-note");
+    if (note) note.classList.add("hidden");
+  }
+  const gen = new Date(DATA.generated);
+  document.getElementById("updated").textContent = "Updated " + gen.toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  render();
+}
+
+// Try the live feed first; fall back to bundled placeholder data.
+fetch("/api/clips")
+  .then(r => { if (!r.ok) throw new Error("no live data"); return r.json(); })
+  .then(boot)
+  .catch(() => fetch("data/clips.json").then(r => r.json()).then(boot));
+
+document.getElementById("tier-filters").addEventListener("click", e => {
+  if (!e.target.classList.contains("chip")) return;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  e.target.classList.add("active");
+  render();
+});
+document.getElementById("search").addEventListener("input", render);
+</script>
+</body>
+</html>
