@@ -34,6 +34,38 @@ export const TIER_DOMAINS = {
   ]
 };
 
+// Outlets that never appear anywhere: PR wires, market aggregators, content farms.
+// They still get counted (wire pickup volume is a Phase 6 signal) but never displayed.
+export const BLOCKLIST = [
+  "businesswire.com", "prnewswire.com", "globenewswire.com", "newswire.com",
+  "accesswire.com", "einnews.com", "openpr.com", "prweb.com",
+  "benzinga.com", "moneycontrol.com", "firstpost.com", "business-standard.com",
+  "livemint.com", "financialexpress.com", "zeebiz.com", "ndtvprofit.com",
+  "streetinsider.com", "marketscreener.com", "investing.com", "tipranks.com",
+  "stocktitan.net", "marketbeat.com", "insidermonkey.com", "fool.com",
+  "biztoc.com", "menafn.com", "devdiscourse.com", "bignewsnetwork.com",
+  "laotiantimes.com", "urdupoint.com"
+];
+
+// Wire services whose bylines show up on aggregator rewrites.
+const WIRE_CREATORS = ["bloomberg", "reuters", "associated press", "ap ", "afp", "ani", "pti", "ians"];
+
+export function isBlocked(sourceUrl = "") {
+  let host = "";
+  try { host = new URL(sourceUrl).hostname.replace(/^www\./, ""); } catch { host = sourceUrl; }
+  return BLOCKLIST.some(d => host === d || host.endsWith("." + d));
+}
+
+// An unlisted outlet running a story bylined to a wire service = rewrite/echo.
+// Signal for spread metrics, junk for display.
+export function isWireEcho(creators, tier) {
+  if (tier !== "other") return false;
+  const c = (creators || []).join(" ").toLowerCase();
+  return WIRE_CREATORS.some(w => c.includes(w));
+}
+
+export const ALLOWLIST = () => Object.values(TIER_DOMAINS).flat();
+
 const SECTION_RULES = [
   {
     name: "Policy & Advocacy",
