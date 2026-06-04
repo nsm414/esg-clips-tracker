@@ -11,7 +11,9 @@ export const TIER_DOMAINS = {
     "deseret.com", "forbes.com", "businessinsider.com", "cnbc.com"
   ],
   political: [
-    "thehill.com", "politico.com", "axios.com", "punchbowl.news",
+    // thehill.com removed per Nick (June 2026) — too much wire-echo volume;
+    // unlisted means Hill stories land in the radar bucket, not the main feed
+    "politico.com", "axios.com", "punchbowl.news",
     "semafor.com", "rollcall.com", "washingtonexaminer.com",
     "washingtontimes.com", "nationalreview.com", "thedispatch.com",
     "notus.org", "govexec.com", "federalnewsnetwork.com", "nextgov.com",

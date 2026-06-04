@@ -24,10 +24,13 @@ const SWEEP_QUERIES = [
   'AI AND (antitrust OR copyright OR IPO OR acquisition OR lawsuit)',
   '(OpenAI OR Anthropic OR DeepMind OR xAI) AND (Washington OR policy OR safety OR deal)'
 ];
-const SWEEPS_PER_RUN = 3;
+// Paid tier (Basic, June 2026): all sweeps every hour, 50 articles/request,
+// full outlet list cycled every ~2 hours. ~13k credits/mo against the 20k budget.
+const SWEEPS_PER_RUN = SWEEP_QUERIES.length;
+const PAGE_SIZE = "50";
 
 // Lane 1: outlets checked by name. Core = every hour; the rest rotate.
-const CORE_DOMAINS = ["nytimes.com", "washingtonpost.com", "wsj.com", "politico.com", "thehill.com"];
+const CORE_DOMAINS = ["nytimes.com", "washingtonpost.com", "wsj.com", "politico.com", "axios.com"];
 const LANE1_QUERY = 'AI OR "artificial intelligence"';
 // NewsData's canonical spellings differ for some outlets; null = skip in queries
 // (classification still recognizes them — this only affects lane-1 fetching).
@@ -35,7 +38,7 @@ const QUERY_OVERRIDES: Record<string, string | null> = {
   "cnn.com": "edition.cnn.com",
   "bbc.co.uk": null
 };
-const ROTATING_BATCHES_PER_RUN = 4;   // 4 batches x 5 domains, rotating each hour
+const ROTATING_BATCHES_PER_RUN = 9;   // 9 batches x 5 domains, full list every ~2 hours
 const KEEP_DAYS = 7;
 
 export default async (req: Request) => {
@@ -110,18 +113,15 @@ export default async (req: Request) => {
     } catch (e) { console.error("query failed", JSON.stringify(reqSpec).slice(0, 120), e); }
   }
 
-  // migrate previously stored articles: drop blocklisted, backfill curated flag,
-  // re-classify sections so old articles match the current taxonomy
+  // migrate previously stored articles: drop blocklisted, and re-derive tier,
+  // curated flag, and section from the CURRENT rules so allowlist/taxonomy
+  // changes apply retroactively to stored clips
   const migrated = existing.articles
     .filter((a: any) => !isBlocked(a.sourceUrl || a.url))
     .map((a: any) => {
+      const tier = classifyTier(a.sourceUrl || a.url, "");
       const section = classifySection({ title: a.headline, description: a.description, keywords: a.keywords });
-      return {
-        ...a,
-        curated: a.curated === undefined ? a.tier !== "other" : a.curated,
-        section: section.name,
-        sectionIcon: section.icon
-      };
+      return { ...a, tier, curated: tier !== "other", section: section.name, sectionIcon: section.icon };
     });
 
   const cutoff = Date.now() - KEEP_DAYS * 86400_000;
@@ -160,7 +160,7 @@ async function fetchNewsData(apiKey: string, q: string, domainurl?: string): Pro
     url.searchParams.set("apikey", apiKey);
     url.searchParams.set("q", q);
     url.searchParams.set("language", "en");
-    url.searchParams.set("size", "10");
+    url.searchParams.set("size", PAGE_SIZE);
     if (domains) url.searchParams.set("domainurl", domains.join(","));
 
     const res = await fetch(url.toString());
