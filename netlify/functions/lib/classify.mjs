@@ -22,7 +22,9 @@ export const TIER_DOMAINS = {
     "arstechnica.com", "venturebeat.com", "zdnet.com", "engadget.com",
     "404media.co", "restofworld.org", "theregister.com", "infoworld.com",
     "computerworld.com", "fastcompany.com", "technologyreview.com",
-    "spectrum.ieee.org", "fiercebiotech.com", "axioshq.com"
+    "spectrum.ieee.org", "fiercebiotech.com", "axioshq.com",
+    "themarkup.org", "calmatters.org", "propublica.org", "fortune.com",
+    "motherjones.com"
   ],
   thinktank: [
     "brookings.edu", "cdt.org", "aei.org", "csis.org", "rand.org",
@@ -66,16 +68,19 @@ export function isWireEcho(creators, tier) {
 
 export const ALLOWLIST = () => Object.values(TIER_DOMAINS).flat();
 
+// Section taxonomy mirrors Nick's clips routine:
+// 💰 Industry & Deals / 🏛️ Policy & Regulation / ⚠️ Safety, Harms & Critical Takes /
+// 👷 Labor & Society / 🔬 Research & Culture
 const SECTION_RULES = [
   {
-    name: "Policy & Advocacy",
+    name: "Policy & Regulation",
     icon: "🏛️",
     keywords: [
       "congress", "senate", "house ", "bill", "legislation", "regulation",
       "regulatory", "executive order", "white house", "federal", "ndaa",
       "law", "act ", "governance", "policy", "lawmaker", "legislat",
-      "ftc", "fcc", "doj", "antitrust", "state bill", "governor", "eu ai act",
-      "preemption", "moratorium", "lobby"
+      "ftc", "fcc", "doj", "state bill", "governor", "eu ai act",
+      "preemption", "moratorium", "lobby", "election", "rulemaking", "agency"
     ]
   },
   {
@@ -85,7 +90,8 @@ const SECTION_RULES = [
       "safety", "risk", "harm", "vulnerab", "cyber", "scam", "fraud",
       "deepfake", "misinformation", "disinformation", "bias", "lawsuit",
       "sue", "breach", "exploit", "dark pattern", "manipul", "addict",
-      "chatbot harm", "mental health", "child", "minor", "suicide"
+      "chatbot harm", "mental health", "child", "minor", "teen", "suicide",
+      "incident", "jailbreak", "guardrail"
     ]
   },
   {
@@ -94,17 +100,27 @@ const SECTION_RULES = [
     keywords: [
       "job", "worker", "labor", "employment", "layoff", "hiring",
       "workforce", "union", "retraining", "displacement", "school",
-      "teacher", "education", "society", "inequality", "wage"
+      "teacher", "education", "student", "society", "inequality", "wage"
     ]
   },
   {
-    name: "Frontier Labs & Industry",
-    icon: "🤖",
+    name: "Industry & Deals",
+    icon: "💰",
     keywords: [
       "openai", "anthropic", "google deepmind", "deepmind", "meta ai",
       "xai", "mistral", "model release", "gpt", "claude", "gemini",
       "frontier", "chip", "nvidia", "data center", "datacenter", "compute",
-      "funding", "valuation", "ipo", "earnings"
+      "funding", "valuation", "ipo", "earnings", "acquisition", "merger",
+      "antitrust", "copyright", "licensing", "partnership", "investment"
+    ]
+  },
+  {
+    name: "Research & Culture",
+    icon: "🔬",
+    keywords: [
+      "study", "research", "paper", "report", "survey", "university",
+      "benchmark", "scientist", "academic", "culture", "art", "film",
+      "book", "music", "creative"
     ]
   }
 ];
@@ -136,9 +152,10 @@ export function classifySection(article) {
 }
 
 export const SECTION_ORDER = [
-  "Policy & Advocacy",
-  "Frontier Labs & Industry",
+  "Policy & Regulation",
+  "Industry & Deals",
   "Safety, Harms & Critical Takes",
   "Labor & Society",
+  "Research & Culture",
   "Other Coverage"
 ];

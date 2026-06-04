@@ -12,11 +12,19 @@ import {
   TIER_DOMAINS, isBlocked, isWireEcho
 } from "./lib/classify.mjs";
 
+// Full topic flag list from the clips routine. 3 sweeps run per hour on rotation,
+// so every topic gets swept every ~3 hours; lane-1 outlet pulls cover the gaps hourly.
 const SWEEP_QUERIES = [
   '"AI regulation" OR "AI policy" OR "AI executive order" OR "AI Act"',
   '"artificial intelligence" AND (Congress OR Senate OR "White House" OR legislation)',
-  '"AI safety" OR "frontier model" OR "AI governance"'
+  '"AI safety" OR "frontier model" OR "AI governance" OR "AI harms"',
+  'AI AND (layoffs OR jobs OR workforce OR union OR hiring)',
+  'AI AND (children OR teens OR schools OR education OR chatbot)',
+  'AI AND (election OR disinformation OR deepfake)',
+  'AI AND (antitrust OR copyright OR IPO OR acquisition OR lawsuit)',
+  '(OpenAI OR Anthropic OR DeepMind OR xAI) AND (Washington OR policy OR safety OR deal)'
 ];
+const SWEEPS_PER_RUN = 3;
 
 // Lane 1: outlets checked by name. Core = every hour; the rest rotate.
 const CORE_DOMAINS = ["nytimes.com", "washingtonpost.com", "wsj.com", "politico.com", "thehill.com"];
@@ -51,9 +59,16 @@ export default async (req: Request) => {
     todaysBatches.push(batches[(start + i) % batches.length]);
   }
 
+  // rotate which sweep queries run this hour (3 of 8, full coverage every ~3 hrs)
+  const sweepStart = (hour * SWEEPS_PER_RUN) % SWEEP_QUERIES.length;
+  const sweeps: string[] = [];
+  for (let i = 0; i < SWEEPS_PER_RUN; i++) {
+    sweeps.push(SWEEP_QUERIES[(sweepStart + i) % SWEEP_QUERIES.length]);
+  }
+
   const requests: { q: string; domainurl?: string }[] = [
     ...todaysBatches.map(b => ({ q: LANE1_QUERY, domainurl: b.join(",") })),
-    ...SWEEP_QUERIES.map(q => ({ q }))
+    ...sweeps.map(q => ({ q }))
   ];
 
   const fresh: any[] = [];
@@ -95,10 +110,19 @@ export default async (req: Request) => {
     } catch (e) { console.error("query failed", JSON.stringify(reqSpec).slice(0, 120), e); }
   }
 
-  // migrate previously stored articles: drop blocklisted, backfill curated flag
+  // migrate previously stored articles: drop blocklisted, backfill curated flag,
+  // re-classify sections so old articles match the current taxonomy
   const migrated = existing.articles
     .filter((a: any) => !isBlocked(a.sourceUrl || a.url))
-    .map((a: any) => a.curated === undefined ? { ...a, curated: a.tier !== "other" } : a);
+    .map((a: any) => {
+      const section = classifySection({ title: a.headline, description: a.description, keywords: a.keywords });
+      return {
+        ...a,
+        curated: a.curated === undefined ? a.tier !== "other" : a.curated,
+        section: section.name,
+        sectionIcon: section.icon
+      };
+    });
 
   const cutoff = Date.now() - KEEP_DAYS * 86400_000;
   const all = [...fresh, ...migrated]
