@@ -21,6 +21,12 @@ const SWEEP_QUERIES = [
 // Lane 1: outlets checked by name. Core = every hour; the rest rotate.
 const CORE_DOMAINS = ["nytimes.com", "washingtonpost.com", "wsj.com", "politico.com", "thehill.com"];
 const LANE1_QUERY = 'AI OR "artificial intelligence"';
+// NewsData's canonical spellings differ for some outlets; null = skip in queries
+// (classification still recognizes them — this only affects lane-1 fetching).
+const QUERY_OVERRIDES: Record<string, string | null> = {
+  "cnn.com": "edition.cnn.com",
+  "bbc.co.uk": null
+};
 const ROTATING_BATCHES_PER_RUN = 4;   // 4 batches x 5 domains, rotating each hour
 const KEEP_DAYS = 7;
 
@@ -55,17 +61,9 @@ export default async (req: Request) => {
 
   for (const reqSpec of requests) {
     try {
-      const url = new URL("https://newsdata.io/api/1/latest");
-      url.searchParams.set("apikey", apiKey);
-      url.searchParams.set("q", reqSpec.q);
-      url.searchParams.set("language", "en");
-      url.searchParams.set("size", "10");
-      if (reqSpec.domainurl) url.searchParams.set("domainurl", reqSpec.domainurl);
-      const res = await fetch(url.toString());
-      if (!res.ok) { console.error("NewsData error", res.status, (await res.text()).slice(0, 200)); continue; }
-      const data = await res.json();
+      const results = await fetchNewsData(apiKey, reqSpec.q, reqSpec.domainurl);
 
-      for (const r of data.results || []) {
+      for (const r of results) {
         if (r.duplicate) continue;
         if (seen.has(r.article_id) || seenLinks.has(r.link)) continue;
         const nt = normTitle(r.title);
@@ -122,6 +120,49 @@ export default async (req: Request) => {
 
   console.log(`refresh-clips: ${fresh.length} new (${fresh.filter(a => a.curated).length} curated), ${junkSkipped} junk, ${echoSkipped} echoes, ${all.length} total`);
 };
+
+// Fetch with self-healing domain handling: if NewsData rejects a domain (422),
+// drop just that domain and retry the batch rather than losing all of it.
+async function fetchNewsData(apiKey: string, q: string, domainurl?: string): Promise<any[]> {
+  let domains = domainurl
+    ? domainurl.split(",")
+        .map(d => QUERY_OVERRIDES[d] === undefined ? d : QUERY_OVERRIDES[d])
+        .filter((d): d is string => !!d)
+    : null;
+
+  for (let attempt = 0; attempt < 6; attempt++) {
+    if (domains && domains.length === 0) return [];
+    const url = new URL("https://newsdata.io/api/1/latest");
+    url.searchParams.set("apikey", apiKey);
+    url.searchParams.set("q", q);
+    url.searchParams.set("language", "en");
+    url.searchParams.set("size", "10");
+    if (domains) url.searchParams.set("domainurl", domains.join(","));
+
+    const res = await fetch(url.toString());
+    if (res.ok) return (await res.json()).results || [];
+
+    const txt = await res.text();
+    let removedAny = false;
+    if (res.status === 422 && domains) {
+      try {
+        const err = JSON.parse(txt);
+        const bad = (Array.isArray(err.results) ? err.results : [])
+          .map((r: any) => r.invalid_domain).filter(Boolean);
+        if (bad.length) {
+          console.warn("dropping invalid domains:", bad.join(","));
+          domains = domains.filter(d => !bad.includes(d));
+          removedAny = true;
+        }
+      } catch {}
+    }
+    if (!removedAny) {
+      console.error("NewsData error", res.status, txt.slice(0, 200));
+      return [];
+    }
+  }
+  return [];
+}
 
 function chunk<T>(arr: T[], n: number): T[][] {
   const out: T[][] = [];
